@@ -6,6 +6,7 @@ import os
 DIR = os.getcwd() + '\\data'
 STORAGE = {}
 
+
 def get_data_from_csv(path: str):
     try:
         file = csv.DictReader(open(path, 'r'))
@@ -13,17 +14,18 @@ def get_data_from_csv(path: str):
     except Exception as exc:
         return [{'status': 'Error', 'message': exc}]
 
-def upload_data_to_csv(new_path: str):
+
+def upload_data_to_csv(new_path: str, data):
     with open(new_path, 'w', newline='') as output_file:
         output_file = csv.writer(output_file)
-        output_file.writerow(['country','gpd'])
-        for line in STORAGE:
-            line = [line,STORAGE[line][0]]
+        output_file.writerow(['country', 'gpd'])
+
+        for line in data:
             output_file.writerow(line)
+
 
 def calculating_average_gdp(file):
     global STORAGE
-
     for row in file:
         if row['country'] not in STORAGE:
             count = 1
@@ -33,21 +35,19 @@ def calculating_average_gdp(file):
             STORAGE[row['country']][0] += int(row['gdp'])
             STORAGE[row['country']][1] += 1
 
-
     return STORAGE
-
-filename = ['economic1.csv', 'economic2.csv']
-output_filename = 'average-gdp.csv'
-
-for file in filename:
-    file = get_data_from_csv(os.path.join(DIR, file))
-    calculating_average_gdp(file)
-
-
-
-upload_data_to_csv(output_filename)
-
 
 
 if __name__ == '__main__':
-    print(DIR)
+    filename = ['economic1.csv', 'economic2.csv']
+    output_filename = 'average-gdp.csv'
+
+    for file in filename:
+        file = get_data_from_csv(os.path.join(DIR, file))
+        calculating_average_gdp(file)
+
+    for country in STORAGE:
+        STORAGE[country] = round(STORAGE[country][0] / STORAGE[country][1], 2)
+
+    new_storage = sorted(STORAGE.items(), key=lambda x: x[1], reverse=True)
+    upload_data_to_csv(output_filename, new_storage)
