@@ -37,10 +37,15 @@ def calculating_average_gdp(file):
 
     return STORAGE
 
+parser = argparse.ArgumentParser(description='-_-')
+parser.add_argument('-f', '--files', type=str, default='economic1.csv economic2.csv', help='Entering file names for calculation')
+parser.add_argument('-r', '--report', type=str, default='average-gdp.csv', help='Entering file name of output file')
+args = parser.parse_args()
 
 if __name__ == '__main__':
-    filename = ['economic1.csv', 'economic2.csv']
-    output_filename = 'average-gdp.csv'
+    #python main.py --files economic1.csv --report ava
+    filename = args.files.split()
+    output_filename = args.report + '.csv'
 
     for file in filename:
         file = get_data_from_csv(os.path.join(DIR, file))
@@ -51,3 +56,7 @@ if __name__ == '__main__':
 
     new_storage = sorted(STORAGE.items(), key=lambda x: x[1], reverse=True)
     upload_data_to_csv(output_filename, new_storage)
+    output_tab = []
+    for i, el in enumerate(new_storage):
+        output_tab.append((i + 1, el[0], el[1]))
+    print(tabulate.tabulate(output_tab, headers=['', 'country', 'gdp'], tablefmt='grid'))
