@@ -37,14 +37,28 @@ def calculating_average_gdp(file):
 
     return STORAGE
 
+
 parser = argparse.ArgumentParser(description='-_-')
-parser.add_argument('-f', '--files', type=str, default='economic1.csv economic2.csv', help='Entering file names for calculation')
-parser.add_argument('-r', '--report', type=str, default='average-gdp.csv', help='Entering file name of output file')
+parser.add_argument('-f', '--files', nargs='+', type=str, default=['economic1.csv', 'economic2.csv'],
+                    help='Entering file names for calculation')
+parser.add_argument('-r', '--report', type=str, default='average-gdp', help='Entering file name of output file')
 args = parser.parse_args()
 
 if __name__ == '__main__':
-    #python main.py --files economic1.csv --report ava
-    filename = args.files.split()
+    # python main.py --files economic1.csv --report ava
+    try:
+        filename = args.files
+        temp = filename[:]
+        total = []
+        for file in filename:
+            for address, dirs, files in os.walk(DIR):
+                if file in files:
+                    temp.remove(file)
+        for file in temp:
+            filename.remove(file)
+    except Exception as exc:
+        print(f'Ошибка {exc}, попробуйте еще раз')
+
     output_filename = args.report + '.csv'
 
     for file in filename:
