@@ -43,7 +43,8 @@ def calculating_average_gdp(file):
 if __name__ == '__main__':
     # python main.py --files economic1.csv --report ava
     parser = argparse.ArgumentParser(description='-_-')
-    parser.add_argument('-f', '--files', nargs='+', type=str, default=['economic1.csv', 'economic2.csv'],
+    files = [files for address, dirs, files in os.walk(DIR)]
+    parser.add_argument('-f', '--files', nargs='+', type=str, default=files[0],
                         help='Entering file names for calculation')
     parser.add_argument('-r', '--report', type=str, default='average-gdp', help='Entering file name of output file')
     args = parser.parse_args()
